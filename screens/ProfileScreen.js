@@ -15,7 +15,7 @@ const ProfileScreen = () => {
             
             {/* header */}
             <View style={tw('flex-row items-center; justify-around relative top-10')}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=> navigation.navigate("Home")}>
                     <Ionicons name="home" size={30} color="grey" />
                 </TouchableOpacity>
 
@@ -28,28 +28,28 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
 
             </View>
-
-            <View style={tw("relative mt-10 items-center")}>
-                <Text>Welcome {user.displayName}</Text>
+            {/* end of header */}
+            
+            <View style={tw("relative mt-20 items-center")}>
+                <Image 
+                    style={tw("h-32 w-32 rounded-full")}
+                    source={{uri: user.photoURL}}
+                />
+                <Text style={tw("mt-10 text-md")}>{user.displayName}</Text>
                 
-                {/* <TouchableOpacity style={tw("absolute left-5 top-3")}>
-                    
-                </TouchableOpacity> */}
+                <TouchableOpacity 
+                style={[
+                    tw("w-52 p-4 rounded-2xl top-10"), 
+                    {marginHorizontal: "25%", backgroundColor: "#FD7656"},
+                ]}
+                onPress={()=> navigation.navigate("UserDetails")}
+                >
+                    <Text 
+                        style={tw("font-semibold text-center text-white")} 
+                        >Select</Text>
+                </TouchableOpacity>
             </View>
 
-            {/* end of header */}
-
-            <Image 
-                        style={tw("h-10 w-10 rounded-full")}
-                        source={{uri: user.photoURL}}
-                    />
-            
-            
-            <Button 
-                title="Go to Home Screen" 
-                onPress={() => navigation.navigate("Home")}
-            />
-            {/* <Button title="Logout" onPress={logout}/> */}
         </SafeAreaView>
     );
 };
