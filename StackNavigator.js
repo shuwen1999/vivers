@@ -6,6 +6,8 @@ import HomeScreen from './screens/HomeScreen';
 import useAuth from './hooks/useAuth';
 import ProfileScreen from './screens/ProfileScreen';
 import SwipeScreen from './screens/SwipePage';
+import { startClock } from 'react-native-reanimated';
+import ModalScreen from './screens/ModalScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,10 +21,16 @@ const StackNavigator = () => {
         >
         {user?(
             <>
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Chat" component={ChatScreen} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-                <Stack.Screen name="Swipe" component={SwipeScreen} />
+                <Stack.Group>
+                    <Stack.Screen name="Home" component={HomeScreen} />
+                    <Stack.Screen name="Chat" component={ChatScreen} />
+                    <Stack.Screen name="Profile" component={ProfileScreen} />
+                    <Stack.Screen name="Swipe" component={SwipeScreen} />
+                </Stack.Group>
+                <Stack.Group screenOptions={{ presentation: "modal"}}>
+                    <Stack.Screen name="Modal" component={ModalScreen} />
+                </Stack.Group>
+                
             </>
         )   :   (
             <Stack.Screen name="Login" component={LoginScreen} />
