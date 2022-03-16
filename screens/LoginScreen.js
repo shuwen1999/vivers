@@ -20,6 +20,7 @@ const LoginScreen = () => {
             source={require('../assets/loginbg.png')}
             resizeMode="cover"
             style={tw("flex-1")}>
+                
                 <TouchableOpacity 
                 style={[
                     tw("absolute bottom-40 w-52 bg-white p-4 rounded-2xl"), 

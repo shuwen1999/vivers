@@ -2,10 +2,10 @@ import React from 'react'
 import { View, Text, ImageBackground, TouchableOpacity, Image, Touchable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import tw from "tailwind-rn";
-import userAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 const ModalScreen = () => {
-    const {signInWithGoogle, loading, user} = userAuth();
+    const {signInWithGoogle, loading, user} = useAuth();
     const navigation = useNavigation();
     
     return (

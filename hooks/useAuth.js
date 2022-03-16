@@ -14,7 +14,6 @@ const AuthContext = createContext({
 
 const config = {
     androidClientId:"476033425092-7e9t2jc0mfp9aqp588kcp64tm8d8kvks.apps.googleusercontent.com",
-    
     scopes: ["profile", "email"],
     permissions:["public_profile","email","gender","location"],
 };
@@ -52,7 +51,7 @@ export const AuthProvider = ({children}) => {
         setLoading(true);
 
         await Google.logInAsync(config).then(async(logInResult) => {
-            if(logInResult.type === 'success'){
+            if(logInResult.type === "success"){
             const {idToken, accessToken} = logInResult;
             const credential = GoogleAuthProvider.credential(idToken,accessToken); 
             await signInWithCredential(auth, credential);               
@@ -83,6 +82,6 @@ export const AuthProvider = ({children}) => {
     );
 };
 
-export default function userAuth(){
+export default function useAuth(){
     return useContext(AuthContext);
 }

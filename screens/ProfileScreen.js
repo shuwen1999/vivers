@@ -1,25 +1,45 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import { View, Text , Button, SafeAreaView, TouchableOpacity, Image} from 'react-native';
 import useAuth from '../hooks/useAuth';
 import tw from "tailwind-rn";
 import { FontAwesome, Ionicons } from '@expo/vector-icons'; 
+import { collection, onSnapshot, doc } from 'firebase/firestore';
+import {db} from "../firebase";
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const {user, logout} = useAuth();
     console.log(user);
+    const [profiles, setProfiles] = useState([]);
+
+    useEffect(()=> {
+        let unsub;
+
+        const fetchCards = async() =>{
+            unsub = onSnapshot(collection(db, "users"), (snapshot) => {
+                setProfiles(
+                    snapshot.docs.map((doc) =>({
+                        id: doc.id,
+                        ...doc.data(),
+                    }))
+                );
+            });
+        };
+        fetchCards();
+        return unsub;
+    },[])
 
     return (
         <SafeAreaView>
             
             {/* header */}
-            <View style={tw('flex-row items-center; justify-around relative top-10')}>
+            <View style={tw('flex-row items-center justify-around relative top-10')}>
                 <TouchableOpacity onPress={()=> navigation.navigate("Home")}>
                     <Ionicons name="home" size={30} color="grey" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Swipe")}>
                     <Ionicons name="chatbubbles" size={30} color="grey" />
                 </TouchableOpacity>
 
@@ -35,8 +55,10 @@ const ProfileScreen = () => {
                     style={tw("h-32 w-32 rounded-full")}
                     source={{uri: user.photoURL}}
                 />
-                <Text style={tw("mt-10 text-md")}>{user.displayName}</Text>
+                <Text style={tw("mt-10 text-base text-black")}>{user.displayName}</Text>
                 
+                
+
                 <TouchableOpacity 
                 style={[
                     tw("w-52 p-4 rounded-2xl top-10"), 
@@ -44,9 +66,23 @@ const ProfileScreen = () => {
                 ]}
                 onPress={()=> navigation.navigate("UserDetails")}
                 >
+                    {/* not showing user.newName as not data is not realtime */}
                     <Text 
                         style={tw("font-semibold text-center text-white")} 
-                        >Select</Text>
+                        >Quick Match</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                style={[
+                    tw("w-52 p-4 rounded-2xl top-10"), 
+                    {marginTop:10,marginHorizontal: "25%", backgroundColor: "#FD7656"},
+                ]}
+                onPress={()=> navigation.navigate("Friend")}
+                >
+                    {/* not showing user.newName as not data is not realtime */}
+                    <Text 
+                        style={tw("font-semibold text-center text-white")} 
+                        >Match with Friends</Text>
                 </TouchableOpacity>
             </View>
 
