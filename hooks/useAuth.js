@@ -63,7 +63,7 @@ export const AuthProvider = ({children}) => {
         .finally(() => setLoading(false));
     };
     
-    //info will be cached and unchanged value will be returned if user/loading/error changed
+    //info will be cached and unchanged value will be returned if nothing has changed
     const memoedValue = useMemo(
         () => ({
             user,

@@ -8,18 +8,18 @@ import RestaurantItem from '../Components/RestaurantItem';
 import { collectionGroup, query, onSnapshot, doc, setDoc, getDoc, serverTimestamp, collection } from 'firebase/firestore';
 import {db} from "../firebase";
 
-const HomeScreen = () => {
+const ListLocation = () => {
     const navigation = useNavigation();
     const {user, signInWithGoogle} = useAuth();
-    const [restaurant, setRestaurant] = useState([]);
+    const [malls, setMalls] = useState([]);
 
     useEffect(()=> {
         let unsub;
 
                 
         const fetchCards = async() =>{
-            unsub = onSnapshot(collectionGroup(db, "eateries"), (snapshot) => {
-                setRestaurant(
+            unsub = onSnapshot(collectionGroup(db, "malls"), (snapshot) => {
+                setMalls(
                     snapshot.docs
                     .map((doc) =>({
                         //id: docid,
@@ -34,10 +34,10 @@ const HomeScreen = () => {
 
     const onClickItem = async(item,index) => {
         
-        const chosenRestaurant = item;
-        console.log(chosenRestaurant.Name);
-        navigation.navigate("Restaurant",{
-            chosenRestaurant
+        const chosenMall = item;
+        console.log(chosenMall.Name);
+        navigation.navigate("ListRestaurant",{
+            chosenMall
         });
     }
 
@@ -59,70 +59,52 @@ const HomeScreen = () => {
             </View>
             {/* <Text style={tw("my-20 text-lg font-bold left-10")}>All Restaurants</Text> */}
             <View>
-                {user
-                ? 
+                
                 <View style={tw("my-16")}>
                     <View style={tw('flex-row items-center justify-around relative')}>
-                        <Text style={tw('text-lg font-bold my-4')}>All Restaurants</Text>
-                        <TouchableOpacity onPress={()=>navigation.navigate("ListLocation")}>
+                        <TouchableOpacity onPress={()=>navigation.navigate("Home")}>
+                            <Text style={tw('text-lg font-bold my-4')}>All Restaurants</Text>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity>
                             <Text style={tw('text-lg font-bold my-4')}>By Location</Text>
                         </TouchableOpacity>
                     </View>
                 
                 
-                <FlatList
-                    data={restaurant}
-                    keyExtractor = {(item,index)=>index.toString()}
-                    renderItem={({item, index})=> item? (
-                    
-                    <TouchableOpacity  
-                        style={{flexDirection:'row', alignItems:'center', backgroundColor: item.selected?'orange':'white'}}
-                        onPress={() => onClickItem(item,index)}
+                    <FlatList
+                        data={malls}
+                        keyExtractor = {(item,index)=>index.toString()}
+                        renderItem={({item, index})=> item? (
                         
-                    >
-                        <Image
-                            style={tw(" h-20 w-20 mr-4")}
-                            source={{uri:item.Image}}
+                        <TouchableOpacity  
+                            style={{flexDirection:'row', alignItems:'center', backgroundColor: item.selected?'orange':'white'}}
+                            onPress={() => onClickItem(item,index)}
                             
-                        />
-                        <Text style={styles.item}key={item.id}>{item.Name}</Text>
-                        <MaterialIcons name="navigate-next" size={24} color="black" />
+                        >
+                            <Image
+                                style={tw(" h-20 w-20 mr-4")}
+                                source={{uri:item.Image}}
+                                
+                            />
+                            <Text style={styles.item}key={item.id}>{item.Name}</Text>
+                            <MaterialIcons name="navigate-next" size={24} color="black" />
+                            
                         
-                       
-                    </TouchableOpacity>):(
-                        <Text>no data</Text>
-                    )
-                }
-               />
+                        </TouchableOpacity>):(
+                            <Text>no data</Text>
+                        )
+                    }
+                />
             </View>
                
-                :
-                <View>
-                <TouchableOpacity onPress={signInWithGoogle} 
-                style={[
-                    tw("w-52 p-4 rounded-2xl top-10"), 
-                    {marginTop:10,marginHorizontal: "25%", backgroundColor: "#BB6BD9"},
-                ]}>
-                    <Text style={tw("font-semibold text-center text-white")} >Logout</Text>
-                </TouchableOpacity>
-            </View>
-                  }    
             </View>    
             
-            
-            {/* end of header */}
-            
-            {/* <Text>I am the homescreen</Text>
-            <Button 
-                title="Go to Profile Screen" 
-                onPress={() => navigation.navigate("Profile")}
-            />
-            <Button title="Logout" onPress={logout}/> */}
         </SafeAreaView>
     );
 };
 
-export default HomeScreen; 
+export default ListLocation; 
  
 const styles = StyleSheet.create({
     container: {

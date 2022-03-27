@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { View, Text , Button, SafeAreaView, TouchableOpacity, Image, ScrollView, FlatList, StyleSheet} from 'react-native';
 import useAuth from "../hooks/useAuth";
@@ -8,17 +8,17 @@ import RestaurantItem from '../Components/RestaurantItem';
 import { collectionGroup, query, onSnapshot, doc, setDoc, getDoc, serverTimestamp, collection } from 'firebase/firestore';
 import {db} from "../firebase";
 
-const HomeScreen = () => {
+const ListRestaurant = () => {
     const navigation = useNavigation();
     const {user, signInWithGoogle} = useAuth();
     const [restaurant, setRestaurant] = useState([]);
+    const {params} = useRoute();
+    const {chosenMall} = params;
 
     useEffect(()=> {
         let unsub;
-
-                
         const fetchCards = async() =>{
-            unsub = onSnapshot(collectionGroup(db, "eateries"), (snapshot) => {
+            unsub = onSnapshot(collection(db, "malls", chosenMall.Name, "eateries"), (snapshot) => {
                 setRestaurant(
                     snapshot.docs
                     .map((doc) =>({
@@ -59,8 +59,7 @@ const HomeScreen = () => {
             </View>
             {/* <Text style={tw("my-20 text-lg font-bold left-10")}>All Restaurants</Text> */}
             <View>
-                {user
-                ? 
+                
                 <View style={tw("my-16")}>
                     <View style={tw('flex-row items-center justify-around relative')}>
                         <Text style={tw('text-lg font-bold my-4')}>All Restaurants</Text>
@@ -96,33 +95,15 @@ const HomeScreen = () => {
                />
             </View>
                
-                :
-                <View>
-                <TouchableOpacity onPress={signInWithGoogle} 
-                style={[
-                    tw("w-52 p-4 rounded-2xl top-10"), 
-                    {marginTop:10,marginHorizontal: "25%", backgroundColor: "#BB6BD9"},
-                ]}>
-                    <Text style={tw("font-semibold text-center text-white")} >Logout</Text>
-                </TouchableOpacity>
-            </View>
-                  }    
+                
             </View>    
             
             
-            {/* end of header */}
-            
-            {/* <Text>I am the homescreen</Text>
-            <Button 
-                title="Go to Profile Screen" 
-                onPress={() => navigation.navigate("Profile")}
-            />
-            <Button title="Logout" onPress={logout}/> */}
         </SafeAreaView>
     );
 };
 
-export default HomeScreen; 
+export default ListRestaurant; 
  
 const styles = StyleSheet.create({
     container: {

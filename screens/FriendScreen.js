@@ -3,13 +3,11 @@ import React, { useLayoutEffect, useState, useRef, useEffect } from 'react';
 import { View, Text ,TextInput, Button, SafeAreaView, TouchableOpacity, Image, StyleSheet, FlatList, StatusBar} from 'react-native';
 import useAuth from '../hooks/useAuth';
 import tw from "tailwind-rn";
-import { FontAwesome, Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
-import Swiper from "react-native-deck-swiper";
-import { collection, onSnapshot, doc, setDoc, getDocs } from 'firebase/firestore';
+import { FontAwesome, Ionicons, Entypo, MaterialIcons } from '@expo/vector-icons'; 
+import { collection, onSnapshot, doc, setDoc, getDocs, getDoc, serverTimestamp } from 'firebase/firestore';
 import {db} from "../firebase";
 import { async } from '@firebase/util';
-// import { FirebaseError } from 'firebase/app';
-
+import generateId from '../lib/generateId';
 
 
 const SwipeScreen = () => {
@@ -17,17 +15,17 @@ const SwipeScreen = () => {
     const {user, logout} = useAuth();
     const [profiles, setProfiles] = useState([]);
     const swipeRef = useRef(null);
-    
     useEffect(()=> {
         let unsub;
 
                 
         const fetchCards = async() =>{
-
-           unsub = onSnapshot(collection(db, "users"), (snapshot) => {
+            unsub = onSnapshot(collection(db, "users"), (snapshot) => {
                 setProfiles(
-                    snapshot.docs.map((doc) =>({
-                        // id: docid,
+                    snapshot.docs
+                    .filter((doc)=>doc.id!== user.uid)
+                    .map((doc) =>({
+                        //id: docid,
                         ...doc.data(),
                     }))
                 );
@@ -37,21 +35,83 @@ const SwipeScreen = () => {
         return unsub;
     },[])
     
+    const onClickItem = async(item,index) => {
+        const loggedInProfile = await(
+            await getDoc(doc(db,"users",user.uid))
+        ).data(); 
+        const newArrData = profiles.map((e,index)=>{
+            const chosenUser = item;
+            console.log("loggedin user is " + user.uid);
+            console.log("user added is "+ chosenUser.id);
+            
+            
+            
+            //check if user added me as friend
+            getDoc(doc(db,"users",chosenUser.id, "friends", user.uid)).then(
+                (documentSnapshot) =>{
+                    if (documentSnapshot.exists()){
+                        console.log("friend exists");
 
-    console.log(profiles);
+                        //add friend in database
+                        setDoc(doc(db,"users", user.uid, "friends", chosenUser.id),chosenUser).catch((error)=>{
+                            console.log(error) });
+
+                        //create a friend database
+                        setDoc(doc(db,"friends",generateId(user.uid, chosenUser.id)),{
+                            users:{
+                                [user.uid]:loggedInProfile,
+                                [chosenUser.id]:chosenUser
+                            },
+                            userFriends:[user.uid,chosenUser.id],
+                            timestamp: serverTimestamp()
+                        });
+                    // modal screen that says we are friends and to head to chat screen 
+                       
+                    }
+                    else{
+                        console.log("friend has not added u");
+                        //add friend in database
+                        setDoc(doc(db,"users", user.uid, "friends", chosenUser.id),chosenUser).catch((error)=>{
+                            console.log(error) });
+                    //modal screen that say i have add friend but friend has not added me, remain on page
+                    }
+                }
+            )
+            
+           
+            navigation.navigate("Location",{
+                loggedInProfile,
+                chosenUser,
+            });
+            if (chosenUser.id == e.id){
+                return{
+                    ...e,
+                    selected:true
+                    
+                }
+            }
+            return{
+                selected:false
+            }
+            
+        })
+        setProfiles(newArrData);
+    }
+
+    
     return (
         <SafeAreaView style={tw("flex-1")}>
             {/* header */}
-            <View style={tw('flex-row items-center justify-around relative top-10')}>
+            <View style={tw('flex-row items-center justify-around relative top-16')}>
                 <TouchableOpacity onPress={() => navigation.navigate("Home")}>
                     <Ionicons name="home" size={30} color="grey" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Swipe")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
                     <Ionicons name="chatbubbles" size={30} color="grey" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Friend")}>
                     <FontAwesome name="user" size={30} color="#FD7656" />
                 </TouchableOpacity>
 
@@ -73,14 +133,19 @@ const SwipeScreen = () => {
             <View>
                 <FlatList
                     data={profiles}
-                   
-                    renderItem={({item})=> item?(<View  style={{flexDirection:'row', alignItems:'center'}}>
+                    keyExtractor = {(item,index)=>index.toString()}
+                    renderItem={({item, index})=> item? (
+                    
+                    <TouchableOpacity  
+                        style={{flexDirection:'row', alignItems:'center', backgroundColor: item.selected?'orange':'white'}}
+                        onPress={() => onClickItem(item,index)}
+                        
+                    >
                         <Text style={styles.item}key={item.id}>{item.displayName}</Text>
-                        <TouchableOpacity>
-                             <AntDesign name="pluscircleo" size={24} color="black" />
-                        </TouchableOpacity>
+                        <MaterialIcons name="navigate-next" size={24} color="black" />
+                        
                        
-                    </View>):(
+                    </TouchableOpacity>):(
                         <Text>no data</Text>
                     )
                 }
@@ -102,6 +167,6 @@ const styles = StyleSheet.create({
     item: {
       padding: 10,
       fontSize: 18,
-      height: 44,
+      height: 44
     },
   });

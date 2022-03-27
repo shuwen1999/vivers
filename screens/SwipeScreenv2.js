@@ -8,19 +8,20 @@ import Swiper from "react-native-deck-swiper";
 import { collection, onSnapshot, doc, setDoc, getDocs } from 'firebase/firestore';
 import {db} from "../firebase";
 import { async } from '@firebase/util';
+import generateId from '../lib/generateId';
 // import { FirebaseError } from 'firebase/app';
 
 
 
-const SwipeScreen = () => {
+const SwipeScreenv2 = () => {
     const navigation = useNavigation();
-    const {user, logout} = useAuth();
+    const {user} = useAuth();
     const [profiles, setProfiles] = useState([]);
     const swipeRef = useRef(null);
     const {params} = useRoute();
-    const {chosenLocation, oneid, chosenUser} = params;
+    const {sessionDetails, creatorId, sessionId} = params;
 
-    console.log(chosenUser);
+    //console.log("lcoation is " + sessionDetails.location);
     // if no profile, trigger modal screen
     useLayoutEffect(()=>
         onSnapshot(doc(db,"users",user.uid),(snapshot)=>{
@@ -44,7 +45,7 @@ const SwipeScreen = () => {
 
             // const swipedRestaurant = swipes.length>0?swipes:['test'];
             
-            unsub = onSnapshot(collection(db, "malls",chosenLocation.Name, "eateries"), (snapshot) => {
+            unsub = onSnapshot(collection(db, "malls",sessionDetails.location, "eateries"), (snapshot) => {
                 setProfiles(
                     snapshot.docs.map((doc) =>({
                         // id: docid,
@@ -62,14 +63,15 @@ const SwipeScreen = () => {
         if (!profiles[cardIndex]) return;
 
         const restaurantSwiped = profiles[cardIndex];
-        console.log('You swiped PASS on '+ restaurantSwiped.Name);
+        //console.log('You swiped PASS on '+ restaurantSwiped.Name);
 
         // setDoc(doc(db,"users",user.uid,'sessions', restaurantSwiped.Name),restaurantSwiped).catch((error)=>{
         //     console.log(error)});
 
-        setDoc(doc(db,"users",user.uid,'sessions', oneid, "passed", restaurantSwiped.Name),restaurantSwiped).catch((error)=>{
-            console.log(error)});
+        setDoc(doc(db,"users",user.uid,'sessions', sessionId),sessionDetails);
 
+        setDoc(doc(db,"users",user.uid,'sessions', sessionId, "passed", restaurantSwiped.Name),restaurantSwiped).catch((error)=>{
+            console.log(error)});
 
         //in the user.uid, add the restaurant id and place all restaurantSwiped data in doc
         //setDoc(doc(db,"users",user.uid,"passes", restaurantSwiped.id), restaurantSwiped);
@@ -79,15 +81,21 @@ const SwipeScreen = () => {
         if (!profiles[cardIndex]) return;
 
         const restaurantSwiped = profiles[cardIndex];
-        console.log('You swiped MATCH on '+ restaurantSwiped.Name);
+        const combinedId= generateId(user.uid,creatorId);
+        //console.log('You swiped MATCH on '+ restaurantSwiped.Name);
 
-        console.log(user.displayName);
-        setDoc(doc(db,"users",user.uid,'sessions', oneid, 'swiped', restaurantSwiped.Name),restaurantSwiped).catch((error)=>{
+        setDoc(doc(db,"users",user.uid,'sessions', sessionId),sessionDetails);
+
+        //console.log(user.displayName);
+        setDoc(doc(db,"users",user.uid,'sessions', sessionId, 'swiped', restaurantSwiped.Name),restaurantSwiped).catch((error)=>{
             console.log(error)});
         
+        
+        setDoc(doc(db,"friends",combinedId,"sessions",sessionId),sessionDetails);
+        setDoc(doc(db,"friends",combinedId,"sessions",sessionId, "matched",restaurantSwiped.Name),restaurantSwiped);
     }
 
-    console.log(profiles);
+    //console.log(profiles);
     return (
         <SafeAreaView style={tw("flex-1")}>
             {/* header */}
@@ -109,7 +117,7 @@ const SwipeScreen = () => {
             {/* end of header */}
             <Text
                 style={tw("mx-6 top-20")}
-            >Session ID: {oneid}</Text>
+            >Session ID: {sessionId}</Text>
             {/* cards */}
             <View style={tw("flex-1 mt-6")}>
                 <Swiper
@@ -120,11 +128,11 @@ const SwipeScreen = () => {
                     cardsIndex={0}
                     animateCardOpacity
                     onSwipedLeft={(cardIndex)=>{
-                        console.log("Swipe PASS");
+                        //console.log("Swipe PASS");
                         swipeLeft(cardIndex);
                     }}
                     onSwipedRight={(cardIndex)=>{
-                        console.log("Swipe MATCH");
+                        //console.log("Swipe MATCH");
                         swipeRight(cardIndex);
                     }}
                     backgroundColor={"#FD7656"}
@@ -174,7 +182,10 @@ const SwipeScreen = () => {
 
                     ):(
                         <View style={tw("relative bg-white h-3/4 rounded-xl justify-center items-center")}>
-                            <Text style={tw("font-bold pb-5")}>No more cards</Text>
+                            <TouchableOpacity onPress={()=>navigation.navigate("Match",{sessionDetails,creatorId, sessionId})}>
+                                <Text style={tw("font-bold pb-5")}>Go to Matches Page</Text>
+                            </TouchableOpacity>
+                            
                             {/* direct to matched pag */}
                         </View> 
                     )}
@@ -188,7 +199,7 @@ const SwipeScreen = () => {
     )
 }
 
-export default SwipeScreen
+export default SwipeScreenv2
 
 const styles = StyleSheet.create({
     cardShadow:{

@@ -10,7 +10,7 @@ import {db} from "../firebase";
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const {user, logout} = useAuth();
-    console.log(user);
+    console.log(user.displayName);
     const [profiles, setProfiles] = useState([]);
 
     useEffect(()=> {
@@ -34,12 +34,12 @@ const ProfileScreen = () => {
         <SafeAreaView>
             
             {/* header */}
-            <View style={tw('flex-row items-center justify-around relative top-10')}>
+            <View style={tw('flex-row items-center justify-around relative top-16')}>
                 <TouchableOpacity onPress={()=> navigation.navigate("Home")}>
                     <Ionicons name="home" size={30} color="grey" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Swipe")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
                     <Ionicons name="chatbubbles" size={30} color="grey" />
                 </TouchableOpacity>
 
@@ -84,7 +84,42 @@ const ProfileScreen = () => {
                         style={tw("font-semibold text-center text-white")} 
                         >Match with Friends</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity 
+                style={[
+                    tw("w-52 p-4 rounded-2xl top-10"), 
+                    {marginTop:10,marginHorizontal: "25%", backgroundColor: "#FD7656"},
+                ]}
+                onPress={()=> navigation.navigate("Join")}
+                >
+                    {/* not showing user.newName as not data is not realtime */}
+                    <Text 
+                        style={tw("font-semibold text-center text-white")} 
+                        >Join Match</Text>
+                </TouchableOpacity>
+
+                <View>
+                    <TouchableOpacity onPress={()=>navigation.navigate("Bookmark")} 
+                    style={[
+                        tw("w-52 p-4 rounded-2xl top-10"), 
+                        {marginTop:10,marginHorizontal: "25%", backgroundColor: "#FD7656"},
+                    ]}>
+                        <Text style={tw("font-semibold text-center text-white")} >Bookmarked</Text>
+                    </TouchableOpacity>
+                </View>
+                
+                <View>
+                    <TouchableOpacity onPress={logout} 
+                    style={[
+                        tw("w-52 p-4 rounded-2xl top-10"), 
+                        {marginTop:10,marginHorizontal: "25%", backgroundColor: "gray"},
+                    ]}>
+                        <Text style={tw("font-semibold text-center text-white")} >Logout</Text>
+                    </TouchableOpacity>
+                </View>
+               
             </View>
+               
 
         </SafeAreaView>
     );
