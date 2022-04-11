@@ -41,13 +41,11 @@ const SwipeScreen = () => {
         const loggedInProfile = await(
             await getDoc(doc(db,"users",user.uid))
         ).data(); 
-        // const newArrData = profiles.map((e,index)=>{
+        
             const chosenUser = item;
             console.log("loggedin user is " + user.uid);
             console.log("user added is "+ chosenUser.id);
-            
-            
-            
+        
             //check if user added me as friend
             getDoc(doc(db,"users",chosenUser.id, "friends", user.uid)).then(
                 (documentSnapshot) =>{
@@ -84,7 +82,6 @@ const SwipeScreen = () => {
                             
                           );
                         
-                    // modal screen that says we are friends and to head to chat screen 
                        
                     }
                     else{
@@ -104,27 +101,11 @@ const SwipeScreen = () => {
                                 
                               );
                             
-                    //modal screen that say i have add friend but friend has not added me, remain on page
+                    
                     }
                 }
             )
-            // navigation.navigate("Location",{
-            //     loggedInProfile,
-            //     chosenUser,
-            // });
-            // if (chosenUser.id == e.id){
-            //     return{
-            //         ...e,
-            //         selected:true
-                    
-            //     }
-            // }
-            // return{
-            //     selected:false
-            // }
             
-        
-        // setProfiles(newArrData);
     }
 
     

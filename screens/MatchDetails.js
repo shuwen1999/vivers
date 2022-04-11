@@ -79,7 +79,24 @@ const AllMatchesScreen = () => {
                             </Card>
                        
                     </TouchableOpacity>):(
-                        <Text style={tw("top-20")}>no data</Text>
+                        <TouchableOpacity  
+                        style={{flexDirection:'row', alignItems:'center', backgroundColor: item.selected?'orange':'white'}}
+                        onPress={() => onClickItem(item,index)}
+                        
+                    >
+                        <Card
+                            
+                            > 
+                                <Image
+                                    style={tw(" h-32 w-32")}
+                                    source={{uri:item.Image}}
+                                    
+                                />
+                                <Text>no matches</Text>
+                                
+                            </Card>
+                       
+                    </TouchableOpacity>
                     )
                 }
                />
