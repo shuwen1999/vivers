@@ -19,7 +19,7 @@ const SwipeScreenv2 = () => {
     const [profiles, setProfiles] = useState([]);
     const swipeRef = useRef(null);
     const {params} = useRoute();
-    const {sessionDetails, creatorId, sessionId} = params;
+    const {creatorId, sessionId, sessionDetails,friendDetails} = params;
 
     //console.log("lcoation is " + sessionDetails.location);
     // if no profile, trigger modal screen
@@ -99,27 +99,23 @@ const SwipeScreenv2 = () => {
     return (
         <SafeAreaView style={tw("flex-1")}>
             {/* header */}
-            <View style={tw('flex-row items-center justify-around relative top-16')}>
-                <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-                    <Ionicons name="home" size={30} color="grey" />
+            <View style={tw('flex-row py-2 relative mt-10 items-center bg-gray-200')}>
+                <TouchableOpacity style={tw("pl-6")}
+                    onPress={()=> navigation.goBack()}
+                >
+                <Ionicons name="chevron-back" size={30} color="black" />
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Swipe")}>
-                    <Ionicons name="chatbubbles" size={30} color="#FD7656" />
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                    <FontAwesome name="user" size={30} color="grey" />
-                </TouchableOpacity>
-
+                
+                <Text style={[tw("text-lg ml-20"),{fontFamily: 'OleoScript_700Bold'}]}>Matching...</Text>
+                <Text style={[tw("rounded-lg h-8 w-20 text-center text-lg absolute right-4"),{backgroundColor:"#FD7656", color:"white", fontFamily:"Lora_700Bold"}]}>{sessionId}</Text>
             </View>
             
             {/* end of header */}
             <Text
-                style={tw("mx-6 top-20")}
-            >Session ID: {sessionId}</Text>
+                style={[tw("mx-6 top-10 text-base"),{fontFamily:"Lora_700Bold"}]}
+            >Location: {sessionDetails.location}</Text>
             {/* cards */}
-            <View style={tw("flex-1 mt-6")}>
+            <View style={tw("flex-1")}>
                 <Swiper
                     ref={swipeRef}
                     containerStyle={{backgroundColor:"transparent"}}
@@ -173,7 +169,7 @@ const SwipeScreenv2 = () => {
                                 <Text style={tw("text-white text-2xl font-bold")}>{cards.Name}</Text>
                                 <Text style={tw("text-white")}>{cards.id}</Text>
                                 </View>
-                                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                                <TouchableOpacity onPress={() => navigation.navigate("Modal",{cards})}>
                                     <Entypo name="info-with-circle" size={30} color="white" />
                                 </TouchableOpacity>
                             </View>
@@ -182,7 +178,7 @@ const SwipeScreenv2 = () => {
 
                     ):(
                         <View style={tw("relative bg-white h-3/4 rounded-xl justify-center items-center")}>
-                            <TouchableOpacity onPress={()=>navigation.navigate("Match",{sessionDetails,creatorId, sessionId})}>
+                            <TouchableOpacity onPress={()=>navigation.navigate("Match",{sessionDetails,creatorId, sessionId, friendDetails})}>
                                 <Text style={tw("font-bold pb-5")}>Go to Matches Page</Text>
                             </TouchableOpacity>
                             

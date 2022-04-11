@@ -57,57 +57,24 @@ const ProfileScreen = () => {
                 />
                 <Text style={tw("mt-10 text-base text-black")}>{user.displayName}</Text>
                 
-                
-
-                <TouchableOpacity 
-                style={[
-                    tw("w-52 p-4 rounded-2xl top-10"), 
-                    {marginHorizontal: "25%", backgroundColor: "#FD7656"},
-                ]}
-                onPress={()=> navigation.navigate("UserDetails")}
-                >
-                    {/* not showing user.newName as not data is not realtime */}
-                    <Text 
-                        style={tw("font-semibold text-center text-white")} 
-                        >Quick Match</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity 
+            
+                <TouchableOpacity onPress={()=>navigation.navigate("Bookmark")} 
                 style={[
                     tw("w-52 p-4 rounded-2xl top-10"), 
                     {marginTop:10,marginHorizontal: "25%", backgroundColor: "#FD7656"},
-                ]}
-                onPress={()=> navigation.navigate("Friend")}
-                >
-                    {/* not showing user.newName as not data is not realtime */}
-                    <Text 
-                        style={tw("font-semibold text-center text-white")} 
-                        >Match with Friends</Text>
+                ]}>
+                    <Text style={tw("font-semibold text-center text-white")} >Bookmarked</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity 
+                
+                
+                <TouchableOpacity onPress={()=>navigation.navigate("Friend")} 
                 style={[
                     tw("w-52 p-4 rounded-2xl top-10"), 
                     {marginTop:10,marginHorizontal: "25%", backgroundColor: "#FD7656"},
-                ]}
-                onPress={()=> navigation.navigate("Join")}
-                >
-                    {/* not showing user.newName as not data is not realtime */}
-                    <Text 
-                        style={tw("font-semibold text-center text-white")} 
-                        >Join Match</Text>
+                ]}>
+                    <Text style={tw("font-semibold text-center text-white")} >Add Friends</Text>
                 </TouchableOpacity>
 
-                <View>
-                    <TouchableOpacity onPress={()=>navigation.navigate("Bookmark")} 
-                    style={[
-                        tw("w-52 p-4 rounded-2xl top-10"), 
-                        {marginTop:10,marginHorizontal: "25%", backgroundColor: "#FD7656"},
-                    ]}>
-                        <Text style={tw("font-semibold text-center text-white")} >Bookmarked</Text>
-                    </TouchableOpacity>
-                </View>
-                
                 <View>
                     <TouchableOpacity onPress={logout} 
                     style={[

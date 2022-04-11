@@ -65,16 +65,24 @@ const RestaurantScreen = () => {
 
     return (
     <SafeAreaView style={tw("flex-1")}>
-        <Text>Bookmarked</Text>
+        
         <View style={tw("items-center bg-gray-200 h-1/4")}>
+            <TouchableOpacity
+                    style={tw("absolute left-4 top-16")}
+                    onPress={()=> navigation.goBack()}
+                >
+                <Ionicons name="chevron-back" size={30} color="black" />
+            </TouchableOpacity>
+
             <Image
                 style={tw(" h-full w-1/2 mr-4 my-16")}
                 source={{uri:chosenRestaurant.Image}}
             />
+
             <TouchableOpacity style={tw("absolute right-4 top-16")}
                 onPress={()=>onBookmark()}>
                     <MaterialIcons name={bookmark} size={24} color={color} />
-                </TouchableOpacity>
+            </TouchableOpacity>
         </View>
         <View>
             <Text
@@ -85,22 +93,22 @@ const RestaurantScreen = () => {
             
             <View style={tw("flex-row items-center mx-4 mb-2")}>
                 <Entypo name="location-pin" size={24} color="red" />
-                <Text>Hougang Mall, JEM</Text>
+                <Text>{chosenRestaurant.Branches}</Text>
             </View>
             
             <View style={tw("flex-row items-center mx-4 mb-2")}>
                 <MaterialIcons name="call" size={24} color="red" />
-                <Text>+65 98475939</Text>
+                <Text>{chosenRestaurant.Phone}</Text>
             </View>
             
             <View style={tw("flex-row items-center mx-4 mb-2")}>
                 <MaterialCommunityIcons name="clock" size={24} color="red" />
-                <Text>11.30am to 9.30pm</Text>
+                <Text>{chosenRestaurant.Opening}</Text>
             </View>
             
             
             <Text style={tw("mx-4")}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis magna nunc, gravida ac tellus id, scelerisque blandit tortor. Phasellus nec augue elit. Suspendisse auctor nisi at porta pellentesque. Etiam at tortor venenatis, rutrum odio sit amet, mattis turpis. Vestibulum ullamcorper neque ac tristique ultricies. Cras pellentesque sit amet ex et consequat. In auctor vehicula tellus, nec aliquam odio maximus a.
+            {chosenRestaurant.Desc}
             </Text>
         </View>
     </SafeAreaView>

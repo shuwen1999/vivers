@@ -8,6 +8,13 @@ import { collection, onSnapshot, doc, setDoc, getDocs, getDoc, serverTimestamp, 
 import {db} from "../firebase";
 import { async } from '@firebase/util';
 import generateId from '../lib/generateId';
+import getMatchedUserInfo from '../lib/getMatchedUserInfo';
+import { 
+    useFonts,
+    OleoScript_400Regular,
+    OleoScript_700Bold 
+  } from '@expo-google-fonts/oleo-script'
+import Card from '../Components/Card';
 
 const LocationScreen = () => {
     const navigation = useNavigation();
@@ -15,9 +22,14 @@ const LocationScreen = () => {
     const [profiles, setProfiles] = useState([]);
     const swipeRef = useRef(null);
     const {params} = useRoute();
-    const {loggedInProfile, chosenUser} = params;
-    const uniqueId = () => parseInt(Date.now() * Math.random()).toString();
-    
+    const {loggedInProfile, chosenUser, friendDetails} = params;
+    const day = 86400000;
+    const uniqueId = () => parseInt((Date.now()/day) * Math.random()).toString();
+    let [fontsLoaded] = useFonts({
+        
+        OleoScript_700Bold 
+      });
+
     useEffect(()=> {
         let unsub;
 
@@ -44,11 +56,12 @@ const LocationScreen = () => {
         const oneid = uniqueId();
         console.log(oneid);
         const docRef = await  setDoc(doc(db,"users",user.uid,'sessions',oneid), {
+            sessionId: oneid,
             creatorId:user.uid,
             creatorName:user.displayName,
             location:chosenLocation.Name,
-            friendId:chosenUser.id,
-            friendName:chosenUser.displayName,
+            friendId:getMatchedUserInfo(friendDetails.users,user.uid).id,
+            friendName:getMatchedUserInfo(friendDetails.users,user.uid).displayName,
             timestamp: serverTimestamp(),
             
           });
@@ -56,7 +69,7 @@ const LocationScreen = () => {
         navigation.navigate("Swipe",{
             chosenLocation,
             oneid,
-            chosenUser,
+            friendDetails,
         });
         
     }
@@ -65,30 +78,17 @@ const LocationScreen = () => {
     return (
         <SafeAreaView style={tw("flex-1")}>
             {/* header */}
-            <View style={tw('flex-row items-center justify-around relative top-10')}>
-                <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-                    <Ionicons name="home" size={30} color="grey" />
+            <View style={tw('flex-row py-2 relative mt-10 items-center bg-gray-200')}>
+                <TouchableOpacity style={tw("pl-6")}
+                    onPress={()=> navigation.goBack()}
+                >
+                <Ionicons name="chevron-back" size={30} color="black" />
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Swipe")}>
-                    <Ionicons name="chatbubbles" size={30} color="grey" />
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                    <FontAwesome name="user" size={30} color="#FD7656" />
-                </TouchableOpacity>
-
+                
+                <Text style={[tw("text-lg ml-16"),{fontFamily: 'OleoScript_700Bold'}]}>Choose a Location</Text>
             </View>
             
             {/* end of header */}
-            <View style={tw("ml-4 mt-4")}>
-                <Text style={tw("text-base p-2 mt-20")}>
-                    Start swiping with {chosenUser.displayName}!
-                </Text>
-                <Text style={tw("text-base p-2")}>
-                    Choose a location:
-                </Text>
-            </View>
             
             {/* list */}
             
@@ -96,6 +96,8 @@ const LocationScreen = () => {
                 <FlatList
                     data={profiles}
                     keyExtractor = {(item,index)=>index.toString()}
+                    numColumns={2}
+                    ListFooterComponent={<View style={{height: 100}}/>}
                     renderItem={({item, index})=> item? (
                     
                     <TouchableOpacity  
@@ -103,8 +105,15 @@ const LocationScreen = () => {
                         onPress={() => onClickItem(item,index)}
                         
                     >
-                        <Text style={styles.item}key={item.id}>{item.Name}</Text>
-                        <MaterialIcons name="navigate-next" size={24} color="black" />
+                        <Card> 
+                            <Image
+                                style={tw(" h-32 w-32")}
+                                source={{uri:item.Image}}
+                                
+                            />
+                            <Text style={styles.item}key={item.id}>{item.Name}</Text>
+                            
+                        </Card>
                         
                        
                     </TouchableOpacity>):(

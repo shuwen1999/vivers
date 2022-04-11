@@ -7,6 +7,7 @@ import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import RestaurantItem from '../Components/RestaurantItem';
 import { collectionGroup, query, onSnapshot, doc, setDoc, getDoc, serverTimestamp, collection } from 'firebase/firestore';
 import {db} from "../firebase";
+import Card from '../Components/Card';
 
 const ListRestaurant = () => {
     const navigation = useNavigation();
@@ -42,7 +43,7 @@ const ListRestaurant = () => {
     }
 
     return (
-        <SafeAreaView>
+        <SafeAreaView >
             {/* header */}
             <View style={tw('flex-row items-center justify-around relative top-16')}>
                 <TouchableOpacity onPress={() => navigation.navigate("Home")}>
@@ -60,18 +61,13 @@ const ListRestaurant = () => {
             {/* <Text style={tw("my-20 text-lg font-bold left-10")}>All Restaurants</Text> */}
             <View>
                 
-                <View style={tw("my-16")}>
-                    <View style={tw('flex-row items-center justify-around relative')}>
-                        <Text style={tw('text-lg font-bold my-4')}>All Restaurants</Text>
-                        <TouchableOpacity onPress={()=>navigation.navigate("ListLocation")}>
-                            <Text style={tw('text-lg font-bold my-4')}>By Location</Text>
-                        </TouchableOpacity>
-                    </View>
-                
-                
+                <View style={tw("my-20")}>
+                    
                 <FlatList
                     data={restaurant}
                     keyExtractor = {(item,index)=>index.toString()}
+                    numColumns={2}
+                    ListFooterComponent={<View style={{height: 100}}/>}
                     renderItem={({item, index})=> item? (
                     
                     <TouchableOpacity  
@@ -79,14 +75,24 @@ const ListRestaurant = () => {
                         onPress={() => onClickItem(item,index)}
                         
                     >
-                        <Image
+                        {/* <Image
                             style={tw(" h-20 w-20 mr-4")}
                             source={{uri:item.Image}}
                             
                         />
                         <Text style={styles.item}key={item.id}>{item.Name}</Text>
-                        <MaterialIcons name="navigate-next" size={24} color="black" />
-                        
+                        <MaterialIcons name="navigate-next" size={24} color="black" /> */}
+                        <Card
+                            
+                            > 
+                                <Image
+                                    style={tw(" h-32 w-32")}
+                                    source={{uri:item.Image}}
+                                    
+                                />
+                                <Text style={styles.item}key={item.id}>{item.Name}</Text>
+                                
+                            </Card>
                        
                     </TouchableOpacity>):(
                         <Text>no data</Text>

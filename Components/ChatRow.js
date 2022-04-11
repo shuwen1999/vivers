@@ -31,7 +31,7 @@ const ChatRow = ({friendDetails}) => {
 
     return (
     <TouchableOpacity 
-        style={tw("flex-row items-center py-4 px-5 bg-white mx-3 my-20 rounded-lg")}
+        style={tw("flex-row items-center py-4 px-5 bg-white mx-3 my-1 rounded-lg")}
         onPress={()=> navigation.navigate("Message", {
             friendDetails,
         })}>
@@ -56,6 +56,8 @@ const ChatRow = ({friendDetails}) => {
             </Text>
             <Text>{lastMessage || "Say Hi"}</Text>
         </View>
+
+        
         
     </TouchableOpacity>
   );

@@ -19,11 +19,25 @@ import RestaurantScreen from './screens/RestaurantScreen';
 import ListLocation from './screens/ListLocation';
 import ListRestaurant from './screens/ListRestaurant';
 import BookmarkScreen from './screens/BookmarkScreen';
-
+import MatchList from './screens/MatchList';
+import {setDoc, doc, serverTimestamp} from 'firebase/firestore';
+import {db} from "./firebase";
+import AllMatchesScreen from './screens/AllMatchesScreen';
+import MatchDetails from './screens/MatchDetails';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
     const {user} = useAuth();
+
+    if (user){
+        setDoc(doc(db, "users", user.uid), {
+            id:user.uid,
+            displayName: user.displayName,
+            ogURL:user.photoURL,
+            timestamp: serverTimestamp()
+          })
+    }
+   
     return (
         <Stack.Navigator
         screenOptions={{
@@ -33,11 +47,12 @@ const StackNavigator = () => {
         {user?(
             
             <Stack.Group>
+                <Stack.Screen name="Chat" component={ChatScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Profile" component={ProfileScreen} />
-                <Stack.Screen name="Join" component={JoinScreen}/>
+                {/* <Stack.Screen name="Join" component={JoinScreen}/> */}
                 <Stack.Screen name="Friend" component={FriendScreen}/>
-                <Stack.Screen name="Chat" component={ChatScreen} />
+                <Stack.Screen name="Modal" component={ModalScreen}/>
                 <Stack.Screen name="Message" component={MessageScreen} />
                 <Stack.Screen name="Swipev2" component={SwipeScreenv2}/>
                 <Stack.Screen name="Swipe" component={SwipeScreen} />
@@ -47,27 +62,18 @@ const StackNavigator = () => {
                 <Stack.Screen name="ListLocation" component={ListLocation}/>
                 <Stack.Screen name="ListRestaurant" component={ListRestaurant}/>
                 <Stack.Screen name="Bookmark" component={BookmarkScreen}/>
-                {/* <Stack.Screen name="Search" component={Search}/> */}
-                
+                <Stack.Screen name="MatchList" component={MatchList}/>
                 <Stack.Screen name="UserDetails" component={UserDetailsScreen}/>
+                <Stack.Screen name="AllMatches" component={AllMatchesScreen}/>
+                <Stack.Screen name="MatchDetails" component={MatchDetails}/>
             </Stack.Group>
+            
             
             
         )   :   (
             <>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            {/* <Stack.Group>
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Chat" component={ChatScreen} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-                <Stack.Screen name="Swipe" component={SwipeScreen} />
-                <Stack.Screen name="UserDetails" component={UserDetailsScreen}/>
-            </Stack.Group>
-             */}
-            {/* <Stack.Group screenOptions={{ presentation: "modal"}}>
-                <Stack.Screen name="Modal" component={ModalScreen} />
-            </Stack.Group> */}
+            <Stack.Screen name="Login" component={LoginScreen} />
+            
             </>
         )}            
             

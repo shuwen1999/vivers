@@ -7,12 +7,16 @@ import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import RestaurantItem from '../Components/RestaurantItem';
 import { collectionGroup, query, onSnapshot, doc, setDoc, getDoc, serverTimestamp, collection } from 'firebase/firestore';
 import {db} from "../firebase";
+import Card from '../Components/Card';
 
 const ListLocation = () => {
     const navigation = useNavigation();
     const {user, signInWithGoogle} = useAuth();
     const [malls, setMalls] = useState([]);
-
+    const options = [
+        { label: "Restaurants", value: "Home" },
+        { label: "Location", value: "ListLocation" },
+      ];
     useEffect(()=> {
         let unsub;
 
@@ -61,20 +65,30 @@ const ListLocation = () => {
             <View>
                 
                 <View style={tw("my-16")}>
-                    <View style={tw('flex-row items-center justify-around relative')}>
+                    <View>
+                        <View style={tw('flex-row items-center relative mx-8 mb-3 mt-5 rounded-full bg-gray-300 w-6/12')}>
                         <TouchableOpacity onPress={()=>navigation.navigate("Home")}>
-                            <Text style={tw('text-lg font-bold my-4')}>All Restaurants</Text>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity>
-                            <Text style={tw('text-lg font-bold my-4')}>By Location</Text>
-                        </TouchableOpacity>
+                             <Text style={tw("px-4 text-black")}>
+                                Restaurants
+                                {/* <Ionicons name="restaurant-outline" size={24} color="black" /> */}
+                            </Text>
+                            </TouchableOpacity>
+                            
+                                <Text style={[tw("px-4 py-2 mr-2 text-white rounded-full font-bold"),{backgroundColor:"#FD7656"}]}>
+                                    Location
+                                    {/* <Ionicons name="location-outline" size={16} color="black" /> */}
+                                </Text>
+                            
+                        </View>
+                           
                     </View>
-                
+                    
                 
                     <FlatList
                         data={malls}
                         keyExtractor = {(item,index)=>index.toString()}
+                        numColumns={2}
+                        ListFooterComponent={<View style={{height: 100}}/>}
                         renderItem={({item, index})=> item? (
                         
                         <TouchableOpacity  
@@ -82,14 +96,15 @@ const ListLocation = () => {
                             onPress={() => onClickItem(item,index)}
                             
                         >
+                            <Card> 
                             <Image
-                                style={tw(" h-20 w-20 mr-4")}
+                                style={tw(" h-32 w-32")}
                                 source={{uri:item.Image}}
                                 
                             />
                             <Text style={styles.item}key={item.id}>{item.Name}</Text>
-                            <MaterialIcons name="navigate-next" size={24} color="black" />
                             
+                        </Card>
                         
                         </TouchableOpacity>):(
                             <Text>no data</Text>

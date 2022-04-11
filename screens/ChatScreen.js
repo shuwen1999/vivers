@@ -8,7 +8,7 @@ import ChatList from '../Components/ChatList';
 const ChatScreen = () => {
     const navigation = useNavigation();
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{flex:1}}>
             {/* header */}
             <View style={tw('flex-row items-center justify-around relative top-16')}>
                 <TouchableOpacity onPress={() => navigation.navigate("Home")}>
@@ -19,11 +19,15 @@ const ChatScreen = () => {
                     <Ionicons name="chatbubbles" size={30} color="#FD7656" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate("Friend")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
                     <FontAwesome name="user" size={30} color="grey" />
                 </TouchableOpacity>
             </View>
-            <ChatList/>
+
+            <View style={tw("mt-20")}>
+                <ChatList/>
+            </View>
+            
         </SafeAreaView>
     )
 }

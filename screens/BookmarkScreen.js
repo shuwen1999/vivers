@@ -7,11 +7,20 @@ import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import RestaurantItem from '../Components/RestaurantItem';
 import { collectionGroup, query, onSnapshot, doc, setDoc, getDoc, serverTimestamp, collection } from 'firebase/firestore';
 import {db} from "../firebase";
+//import { useFonts } from 'expo-font';
+import Card from '../Components/Card';
+import { 
+    OleoScript_400Regular,
+    OleoScript_700Bold, useFonts 
+  } from '@expo-google-fonts/oleo-script'
 
 const BookmarkScreen = () => {
     const navigation = useNavigation();
     const {user} = useAuth();
     const [restaurant, setRestaurant] = useState();
+    let [fontsLoaded] = useFonts({
+        OleoScript_700Bold 
+      });
 
     useEffect(()=> {
         let unsub;
@@ -38,30 +47,30 @@ const BookmarkScreen = () => {
             chosenRestaurant
         });
     }
+    if(!fontsLoaded){return null;}
 
     return (
-        <SafeAreaView>
+        <SafeAreaView >
             {/* header */}
-            <View style={tw('flex-row items-center justify-around relative top-16')}>
-                <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-                    <Ionicons name="home" size={30} color="#FD7656" />
+            
+            <View style={tw('flex-row py-2 relative mt-10 items-center bg-gray-200')}>
+                <TouchableOpacity style={tw("pl-6")}
+                    onPress={()=> navigation.goBack()}
+                >
+                <Ionicons name="chevron-back" size={30} color="black" />
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-                    <Ionicons name="chatbubbles" size={30} color="grey" />
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                    <FontAwesome name="user" size={30} color="grey" />
-                </TouchableOpacity>
+                
+                <Text style={[tw("text-lg ml-16"),{fontFamily: 'OleoScript_700Bold'}]}>All Bookmarked</Text>
             </View>
-            <Text style={tw("mt-20 text-lg font-bold left-10")}>All Bookmarked</Text>
+                
             <View>
                 
-                <View style={tw("my-4")}>
+                <View style={tw("my-2")}>
                    
                 <FlatList
                     data={restaurant}
+                    numColumns={2}
+                    ListFooterComponent={<View style={{height: 100}}/>}
                     keyExtractor = {(item,index)=>index.toString()}
                     renderItem={({item, index})=> item? (
                     
@@ -70,13 +79,17 @@ const BookmarkScreen = () => {
                         onPress={() => onClickItem(item,index)}
                         
                     >
-                        <Image
-                            style={tw(" h-20 w-20 mr-4")}
-                            source={{uri:item.Image}}
+                        <Card
                             
-                        />
-                        <Text style={styles.item}key={item.id}>{item.Name}</Text>
-                        <MaterialIcons name="navigate-next" size={24} color="black" />
+                            > 
+                                <Image
+                                    style={tw(" h-32 w-32")}
+                                    source={{uri:item.Image}}
+                                    
+                                />
+                                <Text style={styles.item}key={item.id}>{item.Name}</Text>
+                                
+                            </Card>
                         
                        
                     </TouchableOpacity>):(
@@ -104,6 +117,6 @@ const styles = StyleSheet.create({
     item: {
       padding: 10,
       fontSize: 18,
-      height: 44
+      height: 44,
     },
   });

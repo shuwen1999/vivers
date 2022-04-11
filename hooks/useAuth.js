@@ -54,7 +54,8 @@ export const AuthProvider = ({children}) => {
             if(logInResult.type === "success"){
             const {idToken, accessToken} = logInResult;
             const credential = GoogleAuthProvider.credential(idToken,accessToken); 
-            await signInWithCredential(auth, credential);               
+            await signInWithCredential(auth, credential);
+                         
             }
             return Promise.reject();
             
