@@ -16,6 +16,7 @@ https://user-images.githubusercontent.com/70445867/171369174-e8a12592-338f-4f71-
 ### Swiping left and right
 
 ![photo_2022-04-08_22-44-56](https://user-images.githubusercontent.com/70445867/171369289-7b224a33-80b9-410e-baab-f6ccdc5465f3.jpg | height=100px)
+<img src="https://user-images.githubusercontent.com/70445867/171369289-7b224a33-80b9-410e-baab-f6ccdc5465f3.jpg" height="100">
 
 ![photo_2022-04-08_22-44-55](https://user-images.githubusercontent.com/70445867/171369295-7a3922bc-48cc-4727-88df-53946ec1bd1e.jpg | height=100px)
 
